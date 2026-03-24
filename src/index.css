@@ -585,13 +585,19 @@ body {
   top: calc(100% + 0.5rem);
   right: 0;
   width: 260px;
+  max-height: 360px;
+  overflow-y: auto;
   background: rgba(20, 18, 38, 0.97);
   border: 1px solid var(--glass-border);
   border-radius: 8px;
-  overflow: hidden;
   animation: fadeUp 0.2s ease;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
 }
+.version-dropdown::-webkit-scrollbar { width: 4px; }
+.version-dropdown::-webkit-scrollbar-track { background: transparent; }
+.version-dropdown::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
 
 .version-option {
   width: 100%;
