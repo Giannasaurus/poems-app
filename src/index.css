@@ -1376,8 +1376,8 @@ body {
 
 .auth-header-btn {
   position: absolute;
-  top: 1.25rem;
-  right: 4.5rem;
+  top: 4rem;
+  right: 1.5rem;
   z-index: 10;
 }
 
