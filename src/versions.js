@@ -63,8 +63,6 @@ export const VERSIONS = [
     ],
     flags: { ...BASE_OFF, readingMode: true, historyTab: true, readingTime: true, copyBtn: true, collapseScroll: true, poemOfDay: true, authorDive: true, fontSizeControl: true, moodFilter: true, shareImage: true, annotations: true, collections: true, streak: true, ambientSound: true, poemStats: true, themes: true, remix: true, writingPrompt: true, compareMode: true, keyboardShortcuts: true },
   },
-]
-
   {
     id: '6.0', label: 'v6.0', title: 'The Real App',
     features: [
