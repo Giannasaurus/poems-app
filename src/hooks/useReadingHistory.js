@@ -1,27 +1,42 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { fetchHistory, addHistory, clearHistory as clearHistoryDb } from '../lib/db'
 
 const MAX = 30
-const KEY = 'verses_history'
+const LOCAL_KEY = 'verses_history'
+
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [] } catch { return [] }
+}
 
 export function useReadingHistory() {
-  const [history, setHistory] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(KEY)) || [] }
-    catch { return [] }
-  })
+  const { user } = useAuth()
+  const [history, setHistory] = useState(loadLocal)
 
-  const addToHistory = useCallback((poem) => {
-    setHistory(prev => {
-      const filtered = prev.filter(p => !(p.title === poem.title && p.author === poem.author))
-      const next = [{ ...poem, readAt: new Date().toISOString() }, ...filtered].slice(0, MAX)
-      localStorage.setItem(KEY, JSON.stringify(next))
-      return next
-    })
-  }, [])
+  useEffect(() => {
+    if (!user) { setHistory(loadLocal()); return }
+    fetchHistory(user.id).then(setHistory)
+  }, [user])
 
-  const clearHistory = useCallback(() => {
-    localStorage.removeItem(KEY)
+  const addToHistory = useCallback(async (poem) => {
+    const filtered = history.filter(p => !(p.title === poem.title && p.author === poem.author))
+    const next = [{ ...poem, readAt: new Date().toISOString() }, ...filtered].slice(0, MAX)
+    setHistory(next)
+    if (user) {
+      await addHistory(user.id, poem)
+    } else {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(next))
+    }
+  }, [history, user])
+
+  const clearHistory = useCallback(async () => {
     setHistory([])
-  }, [])
+    if (user) {
+      await clearHistoryDb(user.id)
+    } else {
+      localStorage.removeItem(LOCAL_KEY)
+    }
+  }, [user])
 
   return { history, addToHistory, clearHistory }
 }

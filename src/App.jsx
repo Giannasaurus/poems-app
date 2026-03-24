@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useVersion } from './context/VersionContext'
+import { useAuth } from './context/AuthContext'
 import { getFlags } from './versions'
 import ParticleCanvas from './components/ParticleCanvas'
 import VersionBadge from './components/VersionBadge'
@@ -16,6 +17,7 @@ import CollectionsPanel from './components/CollectionsPanel'
 import StreakBadge from './components/StreakBadge'
 import ThemeSwitcher from './components/ThemeSwitcher'
 import CompareMode from './components/CompareMode'
+import AuthPanel from './components/AuthPanel'
 import { usePoems } from './hooks/usePoems'
 import { useFavorites } from './hooks/useFavorites'
 import { useReadingHistory } from './hooks/useReadingHistory'
@@ -27,6 +29,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 export default function App() {
   const { version } = useVersion()
   const flags = getFlags(version)
+  const { user, signOut } = useAuth()
 
   const { poems, loading, error, fetchPoems } = usePoems()
   const { favorites, toggle, isFavorite } = useFavorites()
@@ -40,6 +43,7 @@ export default function App() {
   const [authorDive, setAuthorDive] = useState(null)
   const [mood, setMood] = useState('any')
   const [compareOpen, setCompareOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
   const searchRef = useRef(null)
 
   useKeyboardShortcuts({
@@ -76,6 +80,22 @@ export default function App() {
         <header className="header">
           <VersionBadge />
           {flags.streak && streak > 0 && <StreakBadge streak={streak} />}
+          {flags.auth && (
+            <div className="auth-header-btn">
+              {user ? (
+                <div className="auth-user">
+                  <span className="auth-avatar" title={user.email}>
+                    {(user.user_metadata?.avatar_url)
+                      ? <img src={user.user_metadata.avatar_url} alt="avatar" />
+                      : user.email?.[0]?.toUpperCase()}
+                  </span>
+                  <button className="auth-signout" onClick={signOut}>Sign out</button>
+                </div>
+              ) : (
+                <button className="auth-signin-trigger" onClick={() => setAuthOpen(true)}>Sign in</button>
+              )}
+            </div>
+          )}
           <h1 className="header-title">Verses</h1>
           <p className="header-subtitle">a quiet place for poetry</p>
           <div className="header-divider" />
@@ -188,6 +208,7 @@ export default function App() {
           onAddToCollection={addToCollection}
         />
       )}
+      {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
     </>
   )
 }

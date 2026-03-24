@@ -5,6 +5,7 @@ const BASE_OFF = {
   moodFilter: false, shareImage: false, annotations: false, collections: false,
   streak: false, ambientSound: false, poemStats: false,
   themes: false, remix: false, writingPrompt: false, compareMode: false, keyboardShortcuts: false,
+  auth: false, cloudSync: false,
 }
 
 export const VERSIONS = [
@@ -64,5 +65,18 @@ export const VERSIONS = [
   },
 ]
 
-export const getVersion = (id) => VERSIONS.find(v => v.id === id) ?? VERSIONS[4]
+  {
+    id: '6.0', label: 'v6.0', title: 'The Real App',
+    features: [
+      'User accounts — sign up with email, Google, or GitHub',
+      'Cloud sync — favorites, collections, annotations & history follow you',
+      'Reading streak synced across devices',
+      'Seamless localStorage fallback when signed out',
+      'Deployed live on Vercel',
+    ],
+    flags: { ...BASE_OFF, readingMode: true, historyTab: true, readingTime: true, copyBtn: true, collapseScroll: true, poemOfDay: true, authorDive: true, fontSizeControl: true, moodFilter: true, shareImage: true, annotations: true, collections: true, streak: true, ambientSound: true, poemStats: true, themes: true, remix: true, writingPrompt: true, compareMode: true, keyboardShortcuts: true, auth: true, cloudSync: true },
+  },
+]
+
+export const getVersion = (id) => VERSIONS.find(v => v.id === id) ?? VERSIONS[5]
 export const getFlags = (id) => getVersion(id).flags
